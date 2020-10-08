@@ -14,17 +14,22 @@ def scrapp_mail_by_url(sub)
         return "could'nt scrap this information but if you want it, here's the url to fecth it : #{$root + sub}"
     end
     return r["href"].split(":")[1]
-
 end
 
+def name_decomposer(name)
+    h = {}
+    h["first_name"] = name.split(" ")[1]
+    h["last_name"] = name.split(" ")[2]
+    return h
+end
 
 def scrapper
     names = []
     parsed_page = Nokogiri::HTML(URI.open($url))
     i = parsed_page.css('.deputes').css('tr').xpath('//td[1]/a')
     i.each do |name|
-        h = {}
-        h[name.text] = scrapp_mail_by_url(name["href"])
+        h = name_decomposer(name.text)
+        h["email"]= scrapp_mail_by_url(name["href"])
         names << h
     end
     return names
